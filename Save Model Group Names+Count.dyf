@@ -1,0 +1,60 @@
+<Workspace Version="0.9.2.4472" X="0" Y="0" zoom="1" Name="Save Model Group Names+Count" Description="Extracts Model Group Metrics" ID="cd219701-9331-4db2-ba7d-00c69a059f19" Category="Parametrix">
+  <NamespaceResolutionMap />
+  <Elements>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="d3237b98-f3ac-4323-a14a-43a2d367ac44" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="GetGroupName+Count" x="702.383010624381" y="512.87226332782" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false">
+      <ID value="b758ce33-532d-47e0-b70e-db76af9be2af" />
+      <Name value="GetGroupName+Count" />
+      <Description value="Gets Group Names and Counts" />
+      <Inputs>
+        <Input value="Element" />
+      </Inputs>
+      <Outputs>
+        <Output value="CSV" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Dynamo.Graph.Nodes.ZeroTouch.DSFunction guid="ffca68fe-ecdd-4dd0-9128-0282c8c7e67e" type="Dynamo.Graph.Nodes.ZeroTouch.DSFunction" nickname="CSV.WriteToFile" x="882.852476760952" y="445" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" assembly="DSCoreNodes.dll" function="DSCore.IO.CSV.WriteToFile@string,var[][]" />
+    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="83ccc8be-6fd7-46ea-9151-050f0df62703" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="347.803504973795" y="407.390650489809" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false">
+      <Symbol value="FilePath" />
+    </Dynamo.Graph.Nodes.CustomNodes.Symbol>
+    <PythonNodeModels.PythonNode guid="126bf662-7991-441e-83fd-7d7b8850e87d" type="PythonNodeModels.PythonNode" nickname="GetModelGroups" x="516" y="515" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" inputcount="1">
+      <Script>import clr
+clr.AddReference("ProtoGeometry")
+from Autodesk.DesignScript.Geometry import *
+
+# Import DocumentManager and TransactionManager
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+
+# Import RevitAPI
+clr.AddReference("RevitAPI")
+import Autodesk
+from Autodesk.Revit.DB import *
+
+doc = DocumentManager.Instance.CurrentDBDocument
+uiapp = DocumentManager.Instance.CurrentUIApplication
+app = uiapp.Application
+
+from System.Collections.Generic import *
+
+#The inputs to this node will be stored as a list in the IN variable.
+dataEnteringNode = IN
+
+collector = FilteredElementCollector(doc)
+groups = collector.OfCategory(BuiltInCategory.OST_IOSModelGroups).WhereElementIsNotElementType().ToElements()
+OUT = groups</Script>
+    </PythonNodeModels.PythonNode>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="d3237b98-f3ac-4323-a14a-43a2d367ac44" start_index="0" end="ffca68fe-ecdd-4dd0-9128-0282c8c7e67e" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="83ccc8be-6fd7-46ea-9151-050f0df62703" start_index="0" end="ffca68fe-ecdd-4dd0-9128-0282c8c7e67e" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="126bf662-7991-441e-83fd-7d7b8850e87d" start_index="0" end="d3237b98-f3ac-4323-a14a-43a2d367ac44" end_index="0" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations />
+  <Presets />
+  <Cameras>
+    <Camera Name="Background Preview" eyeX="-17" eyeY="24" eyeZ="50" lookX="12" lookY="-13" lookZ="-58" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>
