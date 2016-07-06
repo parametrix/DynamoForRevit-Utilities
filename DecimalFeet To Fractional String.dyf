@@ -1,0 +1,81 @@
+<Workspace Version="1.0.0.1180" X="0" Y="0" zoom="1" Name="DecimalFeet To Fractional String" Description="Converts Fractional Feet To Decima Feet" ID="86650e46-4a07-40f7-8798-d2c1bd5c4bd9" Category="Parametrix">
+  <NamespaceResolutionMap />
+  <Elements>
+    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="8c4a91d3-1562-4076-9721-5c482ae274e5" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Fractional Feet As String" x="194" y="330" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <Symbol value="double" />
+    </Dynamo.Graph.Nodes.CustomNodes.Symbol>
+    <Dynamo.Graph.Nodes.CustomNodes.Output guid="a059cc52-9012-447a-bbd6-4ff628f34b7b" type="Dynamo.Graph.Nodes.CustomNodes.Output" nickname="Decimal Feet" x="653.5" y="322" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <Symbol value="String" />
+    </Dynamo.Graph.Nodes.CustomNodes.Output>
+    <PythonNodeModels.PythonNode guid="122682af-b20b-4319-b544-73fd1ac21677" type="PythonNodeModels.PythonNode" nickname="Decimal Feet To Fractional Feet-Inches" x="388" y="327" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="1">
+      <Script>import clr
+clr.AddReference('ProtoGeometry')
+from Autodesk.DesignScript.Geometry import *
+
+# PRECISION DICTIONARY - GLOBAL
+# p1b32 = precision of 1 / 32... and so on
+pdict = {'p1b2':2, 'p1b4':4, 'p1b8':8, 'p1b16':16, 'p1b32':32}
+
+# FUNCTIONS
+
+def convert2DecimalFeet(strFtInches):
+	feet = strFtInches.split("'")[0]
+	inches = str(strFtInches-int(strFtInches))[1:]
+	return int(feet)+float(re.sub('[-]','', inches))/12
+	
+def convert2FractionalInches(decimalFeet, precision):
+	#inches = str(decimalFeet-int(decimalFeet))[1:]
+	inches = str(decimalFeet).split(".")[1]
+	
+	if(float(inches)==0):
+		return 0
+		
+	inches = float(inches)*12
+		
+	return inches
+	
+def convert2FractionalFeetInches(decimalFeet, precision):
+	feet = str(decimalFeet).split(".")[0]
+	inches = round((decimalFeet - int(feet)),8)*12
+	wholeInches = str(abs(inches)).split(".")[0]
+	fractionalInches = abs(inches - int(wholeInches))
+	
+	fractionalNumerator = fractionalInches*precision
+	numerator = int(fractionalNumerator)
+	
+	while(numerator%2==0 and precision &gt; 2):
+		numerator = int(numerator/2)
+		precision = precision/2
+	
+	returnVal = ""
+	if(numerator!=0):
+		fraction = str(numerator) +"/"+str(precision)
+		returnVal = str(feet)+"\'-"+ str(wholeInches) + " " + str(fraction)+"\""
+	else:
+		returnVal = str(feet)+"\'-"+ str(wholeInches)+"\""
+	
+	return returnVal
+	
+
+#The inputs to this node will be stored as a list in the IN variables.
+dataEnteringNode = IN
+
+convertedValues = []
+for len in IN[0]:
+	convertedValues.append(convert2FractionalFeetInches(len, pdict['p1b32']))
+	
+#Assign your output to the OUT variable.
+OUT = convertedValues</Script>
+    </PythonNodeModels.PythonNode>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="8c4a91d3-1562-4076-9721-5c482ae274e5" start_index="0" end="122682af-b20b-4319-b544-73fd1ac21677" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="122682af-b20b-4319-b544-73fd1ac21677" start_index="0" end="a059cc52-9012-447a-bbd6-4ff628f34b7b" end_index="0" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations />
+  <Presets />
+  <Cameras>
+    <Camera Name="Background Preview" eyeX="-17" eyeY="24" eyeZ="50" lookX="12" lookY="-13" lookZ="-58" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>
