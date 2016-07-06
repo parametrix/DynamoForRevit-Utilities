@@ -1,0 +1,60 @@
+<Workspace Version="1.0.0.1180" X="0" Y="0" zoom="1" Name="String&amp;Fractional Feet To Decimal" Description="Converts Fractional Feet To Decima Feet" ID="40328311-dd39-421a-9b95-4b8ac1b94739" Category="Parametrix">
+  <NamespaceResolutionMap />
+  <Elements>
+    <PythonNodeModels.PythonNode guid="46a0e2ed-739d-4749-8c55-ea2c501cf0f4" type="PythonNodeModels.PythonNode" nickname="String &amp; Fractional Feet to Decimal Feet" x="403" y="334" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="1">
+      <Script>import clr
+import re
+clr.AddReference('ProtoGeometry')
+from Autodesk.DesignScript.Geometry import *
+
+# FUNCTIONS
+
+def convert2DecimalFeet(strFtInches):
+	feet = strFtInches.split("'")[0]
+	inches = strFtInches.split("'")[1].split("\"")[0]
+	return int(feet)+float(re.sub('[-]','', inches))/12
+	
+def convert2DecimalFt(strFtInches):
+	feet = strFtInches.split("'")[0]
+	inches = strFtInches.split("'")[1].split("\"")[0]
+	if('/' in inches):
+		wholeInches = inches.split(" ")[0]
+		wholeInches = re.sub('[-]', '', wholeInches)
+		fractionalInches = inches.split(" ")[1]
+		numerator = fractionalInches.split("/")[0]
+		denominator = fractionalInches.split("/")[1]
+		decimalInches = int(wholeInches) + float(numerator)/float(denominator)
+		return int(feet) + decimalInches/12
+		
+	else:
+		return int(feet)+float(re.sub('[-]','', inches))/12
+
+#The inputs to this node will be stored as a list in the IN variables.
+dataEnteringNode = IN
+
+convertedValues = []
+for len in IN[0]:
+	#convertedValues.append(convert2DecimalFeet(len))
+	convertedValues.append(convert2DecimalFt(len))
+
+#Assign your output to the OUT variable.
+OUT = convertedValues</Script>
+    </PythonNodeModels.PythonNode>
+    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="8c4a91d3-1562-4076-9721-5c482ae274e5" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Fractional Feet As String" x="214" y="329" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <Symbol value="String" />
+    </Dynamo.Graph.Nodes.CustomNodes.Symbol>
+    <Dynamo.Graph.Nodes.CustomNodes.Output guid="a059cc52-9012-447a-bbd6-4ff628f34b7b" type="Dynamo.Graph.Nodes.CustomNodes.Output" nickname="Decimal Feet" x="677.5" y="328" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <Symbol value="double" />
+    </Dynamo.Graph.Nodes.CustomNodes.Output>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="46a0e2ed-739d-4749-8c55-ea2c501cf0f4" start_index="0" end="a059cc52-9012-447a-bbd6-4ff628f34b7b" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="8c4a91d3-1562-4076-9721-5c482ae274e5" start_index="0" end="46a0e2ed-739d-4749-8c55-ea2c501cf0f4" end_index="0" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations />
+  <Presets />
+  <Cameras>
+    <Camera Name="Background Preview" eyeX="-17" eyeY="24" eyeZ="50" lookX="12" lookY="-13" lookZ="-58" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>
