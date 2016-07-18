@@ -1,10 +1,11 @@
-<Workspace Version="1.0.0.1180" X="68.5531616238433" Y="-127.402501924606" zoom="0.994488700419554" Name="GenericAnnotation.PointInView" Description="Place Generic Annotation at Point In View" ID="93c57ab4-1cc3-458b-8816-99f5ed60c2aa" Category="Parametrix">
+<Workspace Version="1.0.0.1180" X="335.197309003087" Y="-61.4847210882763" zoom="0.761885479115601" Name="GenericAnnotation.PointsInViews" Description="Place Generic Annotation at Point In View" ID="464ee898-dcce-46ce-b785-2884682ab2c9" Category="Parametrix">
   <NamespaceResolutionMap>
     <ClassMap partialName="Autodesk.Point" resolvedName="Autodesk.DesignScript.Geometry.Point" assemblyName="ProtoGeometry.dll" />
+    <ClassMap partialName="Point" resolvedName="Autodesk.DesignScript.Geometry.Point" assemblyName="ProtoGeometry.dll" />
   </NamespaceResolutionMap>
   <Elements>
-    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="348520b9-88d0-4d5b-84dc-1bd96dd0da92" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="52.7810954191056" y="189.592944334321" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
-      <Symbol value="points;" />
+    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="348520b9-88d0-4d5b-84dc-1bd96dd0da92" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="-130.350110251436" y="152.569115455056" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <Symbol value="pointList;" />
     </Dynamo.Graph.Nodes.CustomNodes.Symbol>
     <PythonNodeModels.PythonNode guid="b735c26c-45e0-4521-ab83-ee5c693f3a3b" type="PythonNodeModels.PythonNode" nickname="Python Script" x="688.088483216517" y="369.611674568815" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="3">
       <Script>import clr
@@ -30,36 +31,42 @@ dataEnteringNode = IN
 doc = DocumentManager.Instance.CurrentDBDocument
 points = UnwrapElement(IN[0])
 famtype = UnwrapElement(IN[1])
-view = UnwrapElement(IN[2])
+views = UnwrapElement(IN[2])
 
 elementList = list()
-
+counter = 0;
 
 TransactionManager.Instance.EnsureInTransaction(doc)
 for point in points:
+	#get corresponding view
+	view = views[counter]
+	
 	newInst = doc.Create.NewFamilyInstance(point.ToXyz(), famtype, view)
 	elementList.append(newInst.ToDSType(False))
+	counter+=1
 TransactionManager.Instance.TransactionTaskDone()
 
 
 #Assign your output to the OUT variable.
 OUT = elementList</Script>
     </PythonNodeModels.PythonNode>
-    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="1b92c047-2d06-4823-b522-41f36447e0e8" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="148.152969498518" y="409.730439396113" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="1b92c047-2d06-4823-b522-41f36447e0e8" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="-158.979803620649" y="349.353911347046" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
       <Symbol value="familyType" />
     </Dynamo.Graph.Nodes.CustomNodes.Symbol>
-    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="25730afd-fc12-4c39-8825-56cabf3b3539" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="153.855985718189" y="504.776934483615" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
-      <Symbol value="view" />
+    <Dynamo.Graph.Nodes.CustomNodes.Symbol guid="25730afd-fc12-4c39-8825-56cabf3b3539" type="Dynamo.Graph.Nodes.CustomNodes.Symbol" nickname="Input" x="-157.69454118993" y="526.561242070406" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <Symbol value="viewList" />
     </Dynamo.Graph.Nodes.CustomNodes.Symbol>
     <Dynamo.Graph.Nodes.CustomNodes.Output guid="48adc11f-7d77-43c8-af3a-2c3a9614bb92" type="Dynamo.Graph.Nodes.CustomNodes.Output" nickname="Output" x="951.229322043715" y="380.267937901401" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
       <Symbol value="FamilyInstance" />
     </Dynamo.Graph.Nodes.CustomNodes.Output>
+    <Dynamo.Graph.Nodes.CodeBlockNodeModel guid="8a713f71-b648-4d27-a7d5-578145206390" type="Dynamo.Graph.Nodes.CodeBlockNodeModel" nickname="Remove 'Z' Component To Place in Views" x="42.2554838990751" y="256.549466933913" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" CodeText="inputPoint;&#xA;Point.ByCoordinates(inputPoint.X, inputPoint.Y,0);" ShouldFocus="false" />
   </Elements>
   <Connectors>
-    <Dynamo.Graph.Connectors.ConnectorModel start="348520b9-88d0-4d5b-84dc-1bd96dd0da92" start_index="0" end="b735c26c-45e0-4521-ab83-ee5c693f3a3b" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="348520b9-88d0-4d5b-84dc-1bd96dd0da92" start_index="0" end="8a713f71-b648-4d27-a7d5-578145206390" end_index="0" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="b735c26c-45e0-4521-ab83-ee5c693f3a3b" start_index="0" end="48adc11f-7d77-43c8-af3a-2c3a9614bb92" end_index="0" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="1b92c047-2d06-4823-b522-41f36447e0e8" start_index="0" end="b735c26c-45e0-4521-ab83-ee5c693f3a3b" end_index="1" portType="0" />
     <Dynamo.Graph.Connectors.ConnectorModel start="25730afd-fc12-4c39-8825-56cabf3b3539" start_index="0" end="b735c26c-45e0-4521-ab83-ee5c693f3a3b" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="8a713f71-b648-4d27-a7d5-578145206390" start_index="1" end="b735c26c-45e0-4521-ab83-ee5c693f3a3b" end_index="0" portType="0" />
   </Connectors>
   <Notes />
   <Annotations />
